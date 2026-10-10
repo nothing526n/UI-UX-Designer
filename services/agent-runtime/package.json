@@ -1,0 +1,19 @@
+{
+  "name": "@platform/agent-runtime",
+  "version": "1.0.0",
+  "description": "Deterministic AI Orchestrator and 15 Specialized Agents for Design-to-Code Platform",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@platform/contracts": "*",
+    "@platform/design-system": "*",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

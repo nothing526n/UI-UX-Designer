@@ -1,0 +1,248 @@
+// Production Database Schema for AI UI/UX Designer & Design-to-Code Platform
+// Complies with TRD §3.1 & Phase 1 — Platform Foundation Specifications
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum PipelineStage {
+  INIT
+  ANALYZING
+  REQUIREMENTS_READY
+  UX_DESIGNING
+  UI_DESIGNING
+  PROTOTYPE_READY
+  GENERATING_CODE
+  BUILDING
+  QA_RUNNING
+  READY_FOR_APPROVAL
+  APPROVED
+  DEPLOYED
+}
+
+enum ArtifactType {
+  PRD
+  PERSONAS
+  USER_JOURNEYS
+  DESIGN_SYSTEM
+  COMPONENT_SPECS
+  WIREFRAME
+  SCREEN_SPEC
+  PROTOTYPE_GRAPH
+  CODE_COMPONENTS
+  CODE_PAGES
+  QA_REPORT
+  RELEASE_NOTES
+}
+
+enum ArtifactStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  SUPERSEDED
+  REJECTED
+}
+
+enum BuildStatus {
+  QUEUED
+  RUNNING
+  SUCCESS
+  FAILED
+  TIMED_OUT
+}
+
+enum MembershipRole {
+  OWNER
+  ADMIN
+  MEMBER
+  REVIEWER
+  VIEWER
+}
+
+model Organization {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  memberships OrganizationMembership[]
+  projects    Project[]
+  assets      Asset[]
+  auditLogs   AuditLog[]
+
+  @@map("organizations")
+}
+
+model OrganizationMembership {
+  id             String         @id @default(uuid())
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           MembershipRole @default(MEMBER)
+  createdAt      DateTime       @default(now())
+
+  @@unique([organizationId, userId])
+  @@index([organizationId, role])
+  @@map("organization_memberships")
+}
+
+model Project {
+  id             String        @id @default(uuid())
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  slug           String        @unique
+  description    String?
+  status         ProjectStatus @default(ACTIVE)
+  currentStage   PipelineStage @default(INIT)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  artifacts    Artifact[]
+  assets       Asset[]
+  builds       Build[]
+  previews     Preview[]
+  qaReports    QAReport[]
+  auditLogs    AuditLog[]
+
+  @@index([organizationId, status])
+  @@map("projects")
+}
+
+model Artifact {
+  id             String         @id @default(uuid())
+  projectId      String
+  project        Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type           ArtifactType
+  version        Int            @default(1)
+  content        Json
+  createdByAgent String
+  parentVersion  Int?
+  hash           String
+  status         ArtifactStatus @default(DRAFT)
+  createdAt      DateTime       @default(now())
+
+  @@unique([projectId, type, version])
+  @@index([projectId, type])
+  @@map("artifacts")
+}
+
+model Asset {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  projectId      String
+  project        Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  bucket         String       @default("platform-assets")
+  storagePath    String
+  fileName       String
+  mimeType       String
+  sizeBytes      Int
+  sha256         String
+  uploadedBy     String
+  createdAt      DateTime     @default(now())
+
+  @@index([projectId])
+  @@index([organizationId])
+  @@map("assets")
+}
+
+model Build {
+  id            String      @id @default(uuid())
+  projectId     String
+  project       Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  commitSha     String
+  status        BuildStatus @default(QUEUED)
+  logs          String?     @db.Text
+  artifactUrl   String?
+  memoryUsageMb Float?
+  durationMs    Int?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  previews      Preview[]
+  qaReports     QAReport[]
+
+  @@index([projectId, status])
+  @@map("builds")
+}
+
+model Preview {
+  id          String    @id @default(uuid())
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  buildId     String
+  build       Build     @relation(fields: [buildId], references: [id], onDelete: Cascade)
+  previewUrl  String
+  sandboxPort Int
+  status      String    @default("ACTIVE")
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime?
+
+  @@index([projectId, status])
+  @@map("previews")
+}
+
+model QAReport {
+  id              String   @id @default(uuid())
+  projectId       String
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  buildId         String
+  build           Build    @relation(fields: [buildId], references: [id], onDelete: Cascade)
+  overallScore    Int
+  visualDiffScore Int
+  a11yScore       Int
+  perfScore       Int
+  responsiveScore Int
+  passed          Boolean  @default(false)
+  issues          Json     @default("[]")
+  createdAt       DateTime @default(now())
+
+  @@index([projectId, buildId])
+  @@map("qa_reports")
+}
+
+model AuditLog {
+  id             String        @id @default(uuid())
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  projectId      String?
+  project        Project?      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  actorId        String
+  actorType      String        @default("user")
+  action         String
+  metadata       Json          @default("{}")
+  timestamp      DateTime      @default(now())
+
+  @@index([organizationId, timestamp])
+  @@index([projectId, timestamp])
+  @@map("audit_logs")
+}
+
+model User {
+  id          String                   @id @default(uuid())
+  email       String                   @unique
+  name        String
+  role        String                   @default("DESIGNER")
+  avatarUrl   String?
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+  memberships OrganizationMembership[]
+
+  @@map("users")
+}
+

@@ -1,0 +1,29 @@
+{
+  "name": "ai-ui-ux-designer-platform",
+  "version": "1.0.0",
+  "description": "AI UI/UX Designer & Design-to-Code Platform - Production-Grade Multi-Agent Studio",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "services/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev:web",
+    "dev:web": "npm run dev --workspace=@platform/web",
+    "dev:api": "npm run dev --workspace=@platform/api",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "keywords": [
+    "ai",
+    "ui-ux",
+    "design-to-code",
+    "multi-agent",
+    "design-system",
+    "nextjs"
+  ],
+  "author": "Google DeepMind / Antigravity Team",
+  "license": "MIT"
+}

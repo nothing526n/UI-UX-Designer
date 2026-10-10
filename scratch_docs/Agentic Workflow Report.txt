@@ -1,0 +1,284 @@
+COMPLETE FIGMA MODELSAGENTIC WORKFLOW
+Deep Research Report — Figma + MCP + Skills + Agents + Code Connect + Design-to-Code + Code-to-Canvas
+Research date: September 2026Primary evidence: Official Figma Developer Docs, Figma Help Center and Figma Blog
+Executive Summary
+Figma's agentic model is evolving from a one-way design-to-code handoff into a bidirectional system in which AI agents can read structured design context, generate implementation, inspect live interfaces, create native Figma content, modify existing design-system assets, and move information back between code and canvas. The core mechanism is Figma's MCP server, augmented by reusable Skills and Code Connect.
+Figma MCP exposes design context—including variables, components and layout data—to AI agents and can also enable agents to write native Figma content back to the canvas. citeturn0search1
+Figma's write-to-canvas workflow uses the /figma-use skill so agents create real, editable Figma frames, components, variables and auto layout rather than screenshots or flattened approximations. citeturn0search0turn0search3
+Code Connect is the bridge between Figma components and production components, reducing the chance that an agent invents visually similar but technically incorrect components. citeturn0search1turn0search4
+Figma now documents three important agentic directions: code/prototype → Figma, Figma → code, and Figma → agent-generated design exploration. citeturn0search0
+The highest-quality workflow is governed and iterative: understand intent → retrieve context → plan → use existing system assets → generate → validate → human review → connect/update code → repeat.
+Agentic Figma should therefore be treated as a controlled design-development operating system, not as autonomous visual generation.
+1. Research Scope
+This report studies the complete Figma model specifically through the lens of agentic workflows. It covers the underlying document/node model, design systems, variables, components, prototypes, MCP, Skills, tool orchestration, Code Connect, code-to-canvas and canvas-to-code loops, validation, security/governance, and a recommended architecture for an enterprise SaaS product.
+Research questions
+What information must an AI agent understand before modifying a Figma file?
+How does MCP expose Figma's structured model to agents?
+What role do Skills play compared with MCP tools?
+How can agents create native Figma designs rather than screenshots?
+How should Code Connect constrain design-to-code generation?
+How should code and canvas become a continuous feedback loop?
+What controls are needed before autonomous or semi-autonomous edits are trusted?
+2. The Complete Agentic Figma Model
+The complete architecture can be represented as:
+USER INTENT / RESEARCH↓AGENT PLANNER↓MCP CONTEXT RETRIEVAL├─ document/node structure├─ components + variants├─ variables + modes├─ styles + layout├─ annotations└─ Code Connect mappings↓SKILLS / WORKFLOW RULES↓AGENT EXECUTION├─ generate design├─ modify canvas├─ generate code├─ capture live UI└─ synchronize tokens/components↓VALIDATION├─ visual├─ structural├─ accessibility├─ responsive├─ code/component reuse└─ human review↓APPROVAL / RELEASE↓FEEDBACK → DESIGN SYSTEM → CODE → CANVAS
+This is fundamentally different from image generation. The agent operates on structured objects and relationships, so the output can remain editable, reusable and connected to the team's design system.
+3. Figma MCP Architecture
+The Figma MCP server is the main interoperability layer between Figma and AI agents. MCP standardizes how an agent discovers and calls tools exposed by a server. Figma's implementation exposes tools for design context, code generation, writing to the canvas, design-system search, Code Connect, assets and related workflows.
+Remote MCP is Figma's preferred general-purpose connection because it connects directly to Figma's hosted endpoint and exposes the broadest feature set. citeturn0search1turn0search5
+Desktop MCP remains useful for specific local/enterprise workflows. citeturn0search5
+Figma documents tools such as use_figma, get_design_context, search_design_system, Code Connect mapping tools, create_new_file, generate_figma_design and asset tools. citeturn0search4
+MCP is the transport/interface layer; Skills add task-specific sequencing and operating instructions. citeturn0search3turn0search5
+4. Skills vs MCP Tools vs Agent
+Layer
+Responsibility
+Example
+MCP server
+Exposes capabilities/data
+Get context, search system, write canvas
+Skill
+Teaches reliable task sequence
+figma-use, figma-generate-design, figma-code-connect
+Agent
+Plans, decides, invokes tools
+Claude/Codex/Cursor/VS Code agent
+Design system
+Constrains allowed output
+Variables, components, styles, libraries
+Human
+Approves intent and quality
+Review, accessibility, product decisions
+Figma explicitly describes Skills as instructions that help agents decide which tools to use, how to sequence calls and how to apply results. They do not replace the MCP connection or add new MCP capabilities. citeturn0search5
+5. Core Agentic Workflow A — Figma → Code
+1. Designer selects or shares the target frame/layer.
+2. Agent retrieves structured design context.
+3. Agent resolves the project's framework, component library and Code Connect mappings.
+4. Agent identifies variables, typography, spacing, component properties and responsive behavior.
+5. Agent plans implementation using existing production components where possible.
+6. Agent generates code.
+7. Developer/agent runs the application.
+8. Live UI is compared against the Figma source.
+9. Differences are corrected.
+10. Final code is reviewed and shipped.
+Figma's MCP documentation explicitly supports extracting variables, components and layout data and generating code from selected frames. Code Connect is intended to improve reuse of the actual production components. citeturn0search1turn0search4
+6. Core Agentic Workflow B — Code → Figma
+1. Agent works with a local/staging/production interface.
+2. Running UI is captured into Figma as editable design layers.
+3. Agent maps the result to existing components/styles/variables where possible.
+4. Designers inspect the canvas rather than judging only from the browser.
+5. Designers refine hierarchy, spacing, accessibility and interaction.
+6. Agent pushes approved design changes back to code.
+7. The implementation becomes the next validation target.
+Figma's May 2026 workflow documentation describes /prototype-to-figma for bringing a code prototype into Figma as editable frames connected to the design system, followed by refinement and an option to push changes back to code. citeturn0search0
+7. Core Agentic Workflow C — Design Exploration on Canvas
+1. Start with a specific user problem or research insight.
+2. Provide constraints, target user, product context and design-system requirements.
+3. Agent uses existing components, variables and styles.
+4. Agent creates one or more rough directions directly in Figma.
+5. Designer compares alternatives side by side.
+6. Human selects/refines the direction.
+7. Approved design becomes a reusable system pattern.
+8. Agent can continue implementation using the same structured context.
+Figma's documented workflow lets an agent generate alternatives directly on the canvas using existing components, variables and styles, rather than starting from generic visual output. citeturn0search0turn0search2
+8. Design-System-Aware Agent Architecture
+An agent should not be allowed to treat the Figma file as an unstructured picture. The preferred context hierarchy is:
+Brand rules → semantic variables → primitive tokens → component definitions → component properties/variants → patterns → screens → flows.
+Search the design system before creating new assets.
+Reuse existing components before drawing new primitives.
+Use variable bindings rather than copying raw values.
+Respect component properties rather than detaching instances.
+Use Code Connect mappings when implementing production UI.
+Document intentional exceptions.
+Figma's design-system workflow explicitly provides skills for generating libraries and designs from real components, variables and styles. citeturn0search3
+9. Code Connect as the Agentic Bridge
+Code Connect solves a major AI problem: visual similarity is not the same as implementation correctness. An agent might generate a button that looks correct but ignores the team's actual Button component, accessibility logic, analytics hooks or shared behavior.
+Figma component → production component mapping.
+Agent receives stronger implementation context.
+Dev Mode can expose code references directly from the component.
+Multiple framework mappings can be maintained where supported.
+Code Connect should be established for high-frequency, high-impact components first.
+Figma describes Code Connect as a way to keep generated code consistent with the codebase and provides tools for discovering and saving mappings. citeturn0search1turn0search4
+10. Agent Planning Loop
+A reliable agent should follow a deliberate loop rather than executing a single giant prompt:
+OBSERVE → MODEL → PLAN → SEARCH → COMPOSE → VALIDATE → REVIEW → COMMIT   ↑                                      ↓   └────────────── FEEDBACK / CORRECTION ──┘
+Observe: inspect the target file/page/selection.
+Model: infer hierarchy, components, variables, states and constraints.
+Plan: identify what should be reused, changed or created.
+Search: find real library assets before creating replacements.
+Compose: build incrementally using semantic structure.
+Validate: inspect node structure, screenshots, responsive states and mappings.
+Review: obtain human approval for meaningful product/system changes.
+Commit: publish/update only after quality gates pass.
+11. Context Engineering for Figma Agents
+The quality of an agentic workflow depends heavily on context quality. A good context package contains:
+User/problem statement and success criteria.
+Target frame/page/file.
+Design-system rules.
+Relevant components and variants.
+Variable collections and active modes.
+Typography and spacing conventions.
+Responsive requirements.
+Accessibility requirements.
+Existing production component locations.
+Code Connect mappings.
+Do-not-change constraints.
+Definition of done.
+Figma's MCP prompt create_design_system_rules is specifically intended to create rule files that give agents the context needed to translate designs into high-quality, codebase-aware frontend code. citeturn0search4
+12. Validation Model
+Gate
+Question
+Evidence
+Structure
+Is the Figma output genuinely editable and semantic?
+Node tree, components, variables, auto layout
+Visual
+Does it match the intended hierarchy?
+Screenshot/side-by-side review
+Responsive
+Does it behave correctly at target sizes?
+Multiple viewport checks
+System
+Does it reuse the design system?
+Component/variable references
+Accessibility
+Are contrast, states and interaction intent correct?
+Accessibility review
+Code
+Does implementation reuse real production components?
+Code Connect/code review
+Product
+Does the design solve the stated problem?
+Human/product review
+Security
+Did the agent have only required access?
+Permission/audit review
+13. Human-in-the-Loop Model
+Agentic does not have to mean fully autonomous. The recommended enterprise model is graduated autonomy:
+Level 1 — Read-only: agent can inspect and explain.
+Level 2 — Suggest: agent proposes designs/code but does not modify source.
+Level 3 — Draft: agent writes to a draft branch/page/file.
+Level 4 — Review-gated: agent modifies approved product areas but requires human approval before publishing.
+Level 5 — Controlled automation: low-risk repetitive changes can run automatically under policy.
+Level 6 — Avoid unrestricted autonomy for foundational design-system changes, security-sensitive flows or production release decisions.
+14. Security and Governance
+Use least-privilege Figma access and narrow integration scopes.
+Separate draft experimentation from production libraries.
+Treat agent prompts and external context as untrusted input.
+Do not expose confidential design files to an agent unless explicitly authorized.
+Require review for changes to shared variables, foundational components and navigation/security flows.
+Log automated changes and connect them to an issue/commit/agent run where possible.
+Use protected design-system libraries with controlled publishing rights.
+Validate generated code for security, dependency and accessibility issues independently of visual correctness.
+Define which agent actions are allowed, forbidden and approval-gated.
+Figma's documented MCP capabilities and Skills make write-to-canvas possible, which increases the importance of permission boundaries and review gates compared with a read-only design-to-code workflow. citeturn0search1turn0search3
+15. Recommended Enterprise Architecture
+                     ┌──────────────────────┐                     │ Product / User Intent │                     └──────────┬───────────┘                                ↓                     ┌──────────────────────┐                     │     AI Agent Layer   │                     │ plan / reason / act  │                     └──────────┬───────────┘                                ↓                     ┌──────────────────────┐                     │      Figma MCP       │                     └──────────┬───────────┘                                ↓        ┌───────────────────────┼────────────────────────┐        ↓                       ↓                        ↓  Design Context          Design System             Code Connect  nodes/layout            variables/components      Figma↔code maps        └───────────────────────┼────────────────────────┘                                ↓                       Agentic execution                    ↙                         ↘             Figma canvas                    Codebase                    ↘                         ↙                       Validation / QA                              ↓                         Human review                              ↓                       Release / feedback
+The design system is the policy layer; MCP is the capability interface; Skills are workflow instructions; the agent is the planner/executor; Code Connect is the design-code identity layer; humans remain the final authority for product decisions.
+16. Complete Agentic Operating Procedure
+Define the problem and acceptance criteria.
+Identify the authoritative Figma file and target scope.
+Read design-system rules before modifying anything.
+Inspect the target node hierarchy.
+Search existing components, variables and styles.
+Identify Code Connect mappings for relevant components.
+Create an implementation/design plan.
+Make the smallest useful change first.
+Validate structure after each meaningful operation.
+Capture a screenshot or visual comparison.
+Test responsive and state variations.
+Run accessibility and content checks.
+Compare implementation against Figma.
+Request human review at the appropriate autonomy level.
+Publish/update only after approval.
+Record what changed and why.
+Feed stable improvements back into the design system.
+17. Agentic Maturity Model
+Level
+Capability
+Characteristics
+0
+Static design
+Screenshots/mockups; no structured automation
+1
+Context retrieval
+Agent reads Figma design context and generates code
+2
+Design-system aware
+Agent searches/reuses components and variables
+3
+Code-connected
+Code Connect maps design components to production code
+4
+Bidirectional
+Code and canvas can be captured/refined in both directions
+5
+Agentic canvas
+Agent creates/modifies native Figma content using Skills
+6
+Governed automation
+Policies, validation, approvals and audit trails govern actions
+7
+Continuous design-code loop
+Research → design → code → live UI → Figma → system improvement
+18. Risks and Failure Modes
+Pixel imitation without semantic reuse.
+Creating duplicate components instead of searching the library.
+Hard-coded colors/spacing instead of variables.
+Variant explosion and unclear component contracts.
+Agent modifying the wrong page or node.
+Large atomic operations that are difficult to review or recover.
+Generated code visually matching but bypassing production components.
+Design drift between Figma and code.
+AI hallucination of unavailable components or APIs.
+Unreviewed changes to shared design-system foundations.
+Over-automation before governance is mature.
+Treating visual similarity as product correctness.
+19. Strategic Recommendations
+Make the design system the agent's first source of truth.
+Invest in semantic naming and component properties before investing heavily in autonomous generation.
+Map the top 20–50 production components with Code Connect before broad code-generation adoption.
+Create design-system rule files for every major frontend stack.
+Keep agent-generated work in draft/review areas until quality gates are passed.
+Use bidirectional workflows: code-to-canvas for reality capture and canvas-to-code for approved design changes.
+Measure agent quality by reuse, correctness, accessibility and maintainability—not by generation speed alone.
+Build automated visual regression and structural checks around critical workflows.
+Treat Figma libraries as governed platform infrastructure.
+Keep a human decision point for product intent, system-level changes and release decisions.
+20. Research Conclusions
+The most important shift is architectural: Figma is becoming a structured interface between product intent, design systems, code and AI agents. MCP provides the agent interoperability layer; Skills encode reliable workflows; Figma's node/variable/component model provides structured design context; Code Connect establishes identity between design and production components; and write-to-canvas enables agents to return structured output to the design environment.
+The resulting system is best modeled as a closed feedback loop rather than a pipeline. The agent should not simply generate once. It should observe, retrieve context, plan, reuse, create, validate, compare, receive feedback and iterate. The more mature the design system and code mappings, the more trustworthy the agentic workflow becomes.
+21. Official Sources Used
+Figma Developer Docs — Figma MCP Server: https://developers.figma.com/docs/figma-mcp-server/
+Figma Developer Docs — MCP Tools and Prompts: https://developers.figma.com/docs/figma-mcp-server/tools-and-prompts/
+Figma Help — Guide to the Figma MCP Server: https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server
+Figma Help — Figma Skills for MCP: https://help.figma.com/hc/en-us/articles/39166810751895-Figma-skills-for-MCP
+Figma Help — Workflow Lab: Code to Canvas: https://help.figma.com/hc/en-us/articles/40219873508247-Workflow-lab-Code-to-canvas
+Figma Blog — Agents, Meet the Figma Canvas: https://www.figma.com/blog/the-figma-canvas-is-now-open-to-agents/
+Figma Developer Docs — Plugin API: https://developers.figma.com/docs/plugins/
+Figma Developer Docs — REST API: https://developers.figma.com/docs/rest-api/
+Figma Help — Variables: https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma
+Figma Help — Libraries: https://help.figma.com/hc/en-us/articles/360041051154-Guide-to-libraries-in-Figma
+Figma Help — Dev Mode: https://help.figma.com/hc/en-us/articles/15023124644247-Guide-to-Dev-Mode
+Appendix A — Agent Prompt Contract
+A robust agent prompt for Figma work should specify:
+GOAL: the user/product problem.
+TARGET: exact Figma file/page/frame.
+CONTEXT: relevant research and constraints.
+SYSTEM: required components, variables, styles and libraries.
+CODE: framework, source directories and Code Connect mappings.
+BEHAVIOR: interactions, states and responsive requirements.
+CONSTRAINTS: what must not be changed.
+VALIDATION: screenshot, structure, accessibility and code checks.
+APPROVAL: whether the agent may publish or only create a draft.
+Appendix B — Practical Definition of Done
+All major UI is built from reusable components where available.
+Variables are used for system-controlled values.
+Auto layout/constraints encode responsive relationships.
+States and edge cases are represented.
+Relevant components have Code Connect mappings.
+Design and implementation have been visually compared.
+Accessibility requirements have been reviewed.
+Agent changes are within the authorized scope.
+Human owner has approved the result.
+System improvements have been documented.
+End of Deep Research Report

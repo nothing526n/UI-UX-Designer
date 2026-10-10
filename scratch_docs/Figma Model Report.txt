@@ -1,0 +1,203 @@
+COMPLETE FIGMA MODELS
+Deep Research Report — Product, Design, Document, System, Developer, API & AI Models
+Research status: September 2026Scope: Figma Design + Design Systems + Prototyping + Dev Mode + APIs + Plugins + MCP/AI workflows
+Primary purpose
+Understand Figma as a complete design-to-development platform and as a structured document/model system.
+Research basis
+Figma official Help Center, Developer Docs and official Figma publications; current web research performed September 2026.
+Core model
+Document tree → nodes → layout → styles/variables → components → prototypes → libraries → developer context → APIs/agents.
+Audience
+Product architects, UI/UX designers, frontend engineers, design-system teams, AI-agent builders and technical researchers.
+Executive Summary
+This report studies the complete Figma model as a layered system rather than treating Figma as only a visual editor. The central finding is that Figma is best understood as a structured, collaborative canvas whose smallest meaningful units are nodes, whose reusable system is expressed through styles, variables, components and libraries, whose behavioral layer is expressed through prototyping, and whose engineering bridge is Dev Mode, Code Connect, APIs and—more recently—MCP and agentic workflows.
+The document model is a tree: a DocumentNode contains pages, and design content is represented by typed nodes. This is the foundation for editor behavior, plugins and APIs.
+Auto layout and constraints encode relationships between objects rather than merely storing pixel positions, making designs more robust under content and viewport changes.
+Components, variants and component properties transform visual patterns into reusable interfaces with explicit customization contracts.
+Variables and styles provide token-like reusable values for color, typography, spacing, effects, dimensions and state; variable modes enable themes and contextual states.
+Prototyping adds interaction, animation, flows, overlays, scrolling and stateful behavior; variables, expressions and conditionals allow more dynamic prototypes.
+Libraries turn local assets into organizational infrastructure, allowing reusable components, styles and variables to be published and updated across files.
+Dev Mode converts the canvas into a developer-facing inspection and handoff surface, including measurements, properties, code snippets, variables, component playgrounds and readiness/status workflows.
+Figma's Plugin API, REST API and Widget API expose different extension surfaces. The REST API is oriented toward remote file/data access; the Plugin API extends the editor; widgets add interactive canvas nodes.
+MCP extends the model from human-only design handoff toward AI-readable design context and, increasingly, agent-driven code↔canvas workflows. Code Connect supplies mappings between design components and production components.
+The strongest architecture is not 'design first, code later'. It is a feedback loop: intent → structured design system → prototype → implementation → inspection → code/design mapping → validation → iteration.
+Research conclusion
+For teams building a serious SaaS product, Figma should be treated as a design-system and product-architecture source of truth—not merely a screen mockup tool. The quality of its structured assets (component semantics, variable naming, layout rules, annotations and code mappings) increasingly determines how reliably developers and AI agents can consume the design.
+1. Report Structure
+Definition and scope of the Figma model
+Figma product ecosystem
+Internal document/node model
+Layout and responsive model
+Visual styling model
+Variables and design tokens
+Components, variants and component properties
+Libraries and design-system architecture
+Prototyping and interaction model
+Collaboration and workflow model
+Dev Mode and design-to-code model
+API and extension architecture
+MCP, AI and agentic Figma model
+Security and governance considerations
+Reference architecture for a production design system
+Recommended operating workflow
+Research findings, risks and recommendations
+Official sources
+2. What “Complete Figma Models” Means
+“Figma models” here means the conceptual and technical models that explain how Figma represents, edits, reuses, prototypes, exposes and transfers design information. It is broader than a feature list.
+The complete model has ten connected layers: canvas; document/nodes; geometry/layout; visual styling; variables/state; components; interaction; collaboration; developer context; and extension/agent interfaces.
+Research evidence
+Figma describes every file as a tree of nodes with a DocumentNode at the root and PageNodes below it. citeturn0search6
+3. Figma Product and Workflow Ecosystem
+Figma should be studied as an ecosystem rather than one editor. The ecosystem includes Figma Design, FigJam, Figma Slides, Figma Make, Dev Mode, libraries/design systems, plugins/widgets, APIs, webhooks and MCP/agent integrations.
+A practical lifecycle is: discover → map requirements → wireframe → UI design → establish tokens → componentize → prototype → test/review → ready for development → inspect → map to production code → implement → validate → iterate.
+Research evidence
+Figma's Dev Mode documentation positions Dev Mode as a developer-focused interface for navigating designs and transforming design information into code. citeturn0search5
+4. Document and Node Model
+The document model is the foundation of Figma. A file can be conceptualized as Document → Page → Section/Frame → Component/Instance → Layers. Every design object is a node with a type and properties, and nodes can contain children.
+A well-structured design is machine-readable: a named component with properties, variables and semantic structure is much more useful to implementation systems than a flat group of rectangles and text. The same node model supports visual rendering and programmatic traversal.
+Research evidence
+Figma's Plugin API states that every layer corresponds to a node and exposes the figma global object for reading, creating and updating file contents. citeturn0search3
+The REST file endpoint can return JSON and image representations of whole files or individual nodes. citeturn1search18
+5. Layout and Responsive Model
+Figma's layout model is strongest when it describes relationships rather than absolute coordinates. Core concepts include Auto Layout, constraints, fixed/hug/fill sizing, grids and responsive component composition.
+For SaaS UI, a strong default is: responsive shell → layout regions → auto-layout components → component internals → variable-driven values. Avoid absolute positioning as the primary expression of structural relationships.
+Research evidence
+Figma's Auto Layout guide documents automatic resizing behavior and its interaction with components and instances. citeturn0search18
+6. Visual Styling Model
+Styles are reusable definitions for paints/colors, text, effects and layout guides. A scalable hierarchy is primitive values → semantic variables/styles → component tokens → component → screen.
+Recommended token taxonomy: color, typography, spacing, radius, elevation/effects, layout and motion. The governance rule is to avoid hard-coded values when a reusable semantic value should remain consistent.
+Research evidence
+Figma documents styles for paints/colors, text, effects and layout guides and supports publishing them to libraries. citeturn1search11
+7. Variables and Design Token Model
+Variables store reusable values and can be bound to design properties and prototype actions. Key types include color, number, string and boolean. Collections and modes support themes and contextual states.
+A useful architecture is primitive → semantic → component-specific. Modes are especially valuable for light/dark themes, density or product contexts. Variable code syntax can expose platform-specific representations during inspection, while the Variables REST API supports automation subject to permissions and plan requirements.
+Research evidence
+Figma's Variables guide describes reusable values and advanced prototyping with variables. citeturn1search3
+The Variables REST API supports querying, creating, updating and deleting variables subject to plan/account and scope requirements. citeturn0search0
+Variable modes can be changed through prototype interactions. citeturn1search12
+8. Components, Variants and Component Properties
+Components are the central abstraction for reusable UI. Instances reuse the component structure. Variants organize predictable alternatives inside component sets.
+Component properties create an explicit customization contract: Boolean, Text, Instance swap, Variant and Slot. A good design system separates dimensions such as Type, Size and State rather than encoding all combinations into one giant property.
+Research evidence
+Figma's current documentation lists boolean, instance swap, text, variant and slot properties. citeturn1search0turn1search8
+Figma recommends separating variant dimensions such as type and size rather than combining them into one compound property. citeturn1search10
+9. Libraries and Design-System Model
+A Figma library turns a file into a reusable asset source. Components, styles and variables can be published and consumed by other files. A mature organization can use foundation, UI, product and brand libraries.
+The library model creates a dependency graph: downstream product files depend on upstream reusable definitions. Governance should include naming, ownership, release/change policy, deprecation, documentation, accessibility and code mappings.
+Research evidence
+Figma defines libraries as collections of components, styles and variables reusable across files, with update review when published assets change. citeturn1search4
+Figma's design-system course emphasizes styles, components, libraries and naming conventions. citeturn1search5
+10. Prototyping and Interaction Model
+The prototype model connects user actions to state changes and navigation: Trigger → Action → Destination/State → Animation.
+Variables, expressions, multiple actions and conditionals allow richer stateful prototypes without duplicating every screen. Component state should represent reusable UI behavior, while prototype variables can represent scenario/session behavior.
+Research evidence
+Figma's prototyping guide covers flows, triggers, actions, animations, overlays, scrolling and advanced interactions. citeturn1search14
+Variables and expressions can create dynamic values such as cart totals, progress bars and conditional logic. citeturn1search9
+11. Collaboration and Workflow Model
+A production workflow should separate exploration, system, product, prototype, ready-for-development and archive concerns. Review should occur at three levels: visual, interaction and system.
+The most common structural failure is divergence between exploratory screens and the actual design system. Critical product states should be represented explicitly, especially loading, empty, error, success and disabled states.
+Research evidence
+Figma's Dev Mode includes statuses and workflows for identifying designs that are ready for development. citeturn0search5
+12. Dev Mode and Design-to-Code Model
+Dev Mode is the engineering-facing layer of Figma. It provides implementation-oriented inspection and reduces ambiguity during handoff.
+Key concepts include Inspect, Focus view, Component playground, Variables, Annotations, code snippets, Code Connect and Figma for VS Code. The strongest handoff is semantic—use the approved Card component and tokens—rather than purely geometric instructions.
+Research evidence
+Figma describes Dev Mode as a developer-focused, read-only surface for inspection and implementation. citeturn0search1
+The Dev Mode guide highlights inspection, readiness/status, variants, integrations, Code Connect and VS Code. citeturn0search5
+13. API and Extension Architecture
+Figma exposes multiple extension surfaces. The Plugin API is editor-integrated automation; the REST API is remote data/file integration; the Widget API adds interactive canvas experiences; webhooks enable event-driven workflows.
+A useful enterprise pattern is Figma → webhook/event → integration service → CI/PM/engineering system, and external system → API/plugin → Figma. Security should apply least privilege, scoped access and explicit ownership.
+Research evidence
+Figma compares the Plugin, Widget and REST APIs by use case. citeturn0search13
+Figma webhooks can observe events such as comments and version changes and trigger external workflows. citeturn1search7turn1search13
+14. MCP, AI and Agentic Figma Model
+The newest model changes the role of the Figma file: it can become context for AI agents and, in supported workflows, a canvas agents can create or modify.
+Conceptually: Figma document → structured design context (nodes, layout, variables, components, annotations, code mappings) → MCP → AI agent → generated code or canvas edits → human review → production.
+This is stronger than pixel-only prompting because the agent can consume semantics such as component names, token relationships and code mappings.
+Research evidence
+Figma's MCP announcement describes design-informed code generation and code/image/variable context, with Code Connect helping align generated code to existing components. citeturn2search0
+Figma's 2026 MCP guidance describes structured context, code-to-canvas roundtrips and agent-driven canvas workflows. citeturn2search2turn2search9
+Figma also documents remote MCP access and broader IDE/agent/codebase connections. citeturn2search3turn2search10
+15. Security and Governance Architecture
+Recommended controls are identity, seat/role governance, file permissions, library ownership, scoped integration credentials, API boundaries, webhook validation, AI exposure rules, human approval for high-impact changes and external auditability.
+The core principle is that design data is increasingly operational data. Once AI agents consume design context at scale, poor naming, inconsistent tokens or unsafe patterns can propagate into generated implementations.
+Research evidence
+The Variables REST API documents explicit scopes and plan/account requirements, illustrating the need for deliberate API permissions. citeturn0search0turn0search9
+Dev Mode plugins are read-only for document editing, illustrating capability separation. citeturn0search1
+16. Reference Architecture for a Production Figma Design System
+Recommended file structure:
+01 Foundations — color, typography, spacing, radius, elevation, motion, icons.02 Core Components — buttons, inputs, selects, navigation, tables, cards, feedback.03 Patterns — search, filters, forms, empty/error/loading states, dashboard patterns.04 Product Flows — onboarding, authentication, workspace, settings, billing, admin.05 Prototype — critical journeys and edge cases.06 Dev Handoff — ready-for-dev frames, annotations, Code Connect mappings.07 Archive — deprecated and historical material.
+Reusable definitions should remain upstream; product screens should primarily be compositions of approved assets.
+Research evidence
+This structure follows Figma's documented emphasis on styles, components, properties, libraries and design-system documentation. citeturn1search5turn1search6
+17. Recommended End-to-End Operating Workflow
+1) Requirements → 2) information architecture → 3) wireframes → 4) foundations/variables → 5) core components → 6) variants/properties → 7) publish libraries → 8) product screens → 9) critical prototypes → 10) accessibility/responsive review → 11) ready for development → 12) Dev Mode inspection → 13) Code Connect → 14) implementation → 15) visual/system validation → 16) feedback to Figma → 17) deprecation/documentation.
+The workflow is cyclical: system changes and implementation feedback should travel in both directions.
+Research evidence
+Figma's current Dev Mode and MCP materials emphasize tighter design↔code loops and preserving structured design context during implementation. citeturn0search7turn2search2
+18. Quality Model for Evaluating a Figma File
+Audit eight dimensions: Structure, Layout, System, Semantics, Behavior, Accessibility, Handoff and AI readiness.
+Maturity:Level 0 — flat visual mockups.Level 1 — organized screens/basic components.Level 2 — reusable components/styles/auto layout.Level 3 — variables/libraries/robust states.Level 4 — Dev Mode/Code Connect/documented handoff.Level 5 — integrated design/code/AI loop with governed automation.
+This maturity scale is a synthesis for internal assessment, not an official Figma rating system.
+19. Key Findings
+Finding
+Implication
+Structure beats pixels
+The more semantic the file, the more useful it becomes to designers, developers, automation and AI agents.
+Components are contracts
+A component is most valuable when permitted changes are explicit through properties and variants.
+Variables are system infrastructure
+Variables allow a design to behave like a tokenized system rather than hard-coded visual values.
+Auto layout is a behavioral model
+Responsive quality comes from encoding relationships and sizing rules, not simply producing multiple screenshots.
+Libraries create organizational scale
+Libraries turn local assets into reusable infrastructure with ownership and update mechanisms.
+Prototypes should model state
+Variables, conditionals and expressions allow a small set of frames to express richer product behavior.
+Dev Mode is a translation layer
+It converts design information into implementation-oriented context and reduces ambiguity.
+APIs make Figma programmable
+Plugin, REST, Widget and webhook surfaces support different classes of automation.
+MCP changes the audience of the design file
+The design is increasingly consumed by coding/design agents that need structured context.
+Governance becomes more important with AI
+Agents can reuse design patterns at scale, so poor naming or inconsistent tokens can propagate rapidly.
+20. Recommended Architecture for a SaaS Product Team
+Create one governed foundation library for primitives and semantic variables.
+Create a core UI library with component properties and variants instead of duplicating screens.
+Use auto layout by default for structural UI relationships.
+Use variable modes for light/dark and other genuine contextual themes.
+Create loading, empty, error, disabled and success states for important components.
+Use product files primarily as compositions of library assets.
+Use Dev Mode as the official handoff surface.
+Map high-value components to production code with Code Connect.
+Define an AI-readiness standard: meaningful layer names, semantic tokens, component descriptions, annotations and code mappings.
+Keep agent permissions narrower than human editor permissions wherever possible.
+Use webhooks/integrations for repeatable workflow events instead of manual status copying.
+Audit the system quarterly for duplicate components, deprecated tokens, broken mappings and inconsistent states.
+21. Research Limitations
+This report focuses on Figma's publicly documented product and developer model and uses official Figma sources as the primary evidence base. Some enterprise capabilities depend on plan, seat type, permissions or rollout status. Figma's product surface changes quickly, especially around AI/MCP, so implementation decisions should be validated against current official documentation and the organization's actual plan/permissions before deployment.
+22. Official Research Sources
+Figma Developer Docs — Plugin API / document model: https://developers.figma.com/docs/plugins/
+Figma Developer Docs — Plugin API reference: https://developers.figma.com/docs/plugins/api/api-reference/
+Figma Developer Docs — REST API file endpoints: https://developers.figma.com/docs/rest-api/file-endpoints/
+Figma Developer Docs — Variables REST API: https://developers.figma.com/docs/rest-api/variables/
+Figma Developer Docs — Variables endpoints: https://developers.figma.com/docs/rest-api/variables-endpoints/
+Figma Developer Docs — API comparison: https://developers.figma.com/compare-apis/
+Figma Developer Docs — Webhooks: https://developers.figma.com/docs/rest-api/webhooks/
+Figma Help — Auto Layout: https://help.figma.com/hc/en-us/articles/360040451373-Guide-to-auto-layout
+Figma Help — Styles: https://help.figma.com/hc/en-us/articles/360039238753-Styles-in-Figma-Design
+Figma Help — Variables: https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma
+Figma Help — Component properties: https://help.figma.com/hc/en-us/articles/5579474826519-Explore-component-properties
+Figma Help — Variants: https://help.figma.com/hc/en-us/articles/360056440594-Create-and-use-variants
+Figma Help — Libraries: https://help.figma.com/hc/en-us/articles/360041051154-Guide-to-libraries-in-Figma
+Figma Help — Prototyping: https://help.figma.com/hc/en-us/articles/360040314193-Guide-to-prototyping-in-Figma
+Figma Help — Variables in prototypes: https://help.figma.com/hc/en-us/articles/14506587589399-Use-variables-in-prototypes
+Figma Help — Expressions in prototypes: https://help.figma.com/hc/en-us/articles/15253194385943-Use-expressions-in-prototypes
+Figma Help — Dev Mode: https://help.figma.com/hc/en-us/articles/15023124644247-Guide-to-Dev-Mode
+Figma Developer Docs — Working in Dev Mode: https://developers.figma.com/docs/plugins/working-in-dev-mode/
+Figma Blog — Introducing MCP server: https://www.figma.com/blog/introducing-figma-mcp-server/
+Figma Blog — The future of design is code and canvas: https://www.figma.com/blog/the-future-of-design-is-code-and-canvas/
+Figma Blog — The TL;DR on MCP: https://www.figma.com/blog/the-tldr-on-mcp/
+Figma Blog — Agents meet the Figma canvas: https://www.figma.com/blog/the-figma-canvas-is-now-open-to-agents/
+End of report

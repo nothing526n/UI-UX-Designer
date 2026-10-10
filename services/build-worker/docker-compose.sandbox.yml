@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  build-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: platform-build-sandbox
+    ports:
+      - "4001:4001"
+    environment:
+      - PORT=4001
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    security_opt:
+      - no-new-privileges:true
+    read_only: false
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=1024m
+    restart: unless-stopped
